@@ -12,6 +12,7 @@ class ModulesObjectsBaseModel {
         this._baseObject = null; //link to pixi object
         this._uid = Urso.helper.recursiveGet('_uid', params, false); //will setup on create
         this._templatePath = false;
+        this.world = Urso.objects.getWorld();
     }
 
     setupParams(params) {
@@ -132,29 +133,26 @@ class ModulesObjectsBaseModel {
         return this;
     };
 
-    toGlobal() {
-        const world = Urso.objects.getWorld();
-        const worldScale = world._baseObject.scale;
-        const worldPoint = { x: world.x, y: world.y };
+    toGlobal(){
+        const worldPoint = {x: this.world.x, y: this.world.y};
         const globalPoint = this._baseObject.toGlobal(worldPoint);
-
-        const x = Math.floor(globalPoint.x / worldScale.x);
-        const y = Math.floor(globalPoint.y / worldScale.y);
-
-        return { x, y };
+        return this._calculatePosition(globalPoint);
     }
 
-    toLocal(from) {
-        const world = Urso.objects.getWorld();
-        const worldPoint = { x: world.x, y: world.y };
-        const parent = this.parent ? this.parent._baseObject : world._baseObject;
-        const fromObj = from ? from._baseObject : parent;
-        const localPoint = this._baseObject.toLocal(worldPoint, fromObj);
+    toLocal(from){
+        from = from || this._baseObject.parent;
+        const worldPoint = {x: this.world.x, y: this.world.y};
+        const localPoint = this._baseObject.toLocal(worldPoint, from);
+        return this._calculatePosition(localPoint);
+    }
 
-        const x = -~~localPoint.x;
-        const y = -~~localPoint.y;
+    _calculatePosition(point){
+        const worldScale = this.world._baseObject.scale;
 
-        return { x, y };
+        const x = Math.floor(point.x / worldScale.x);
+        const y = Math.floor(point.y / worldScale.y);
+
+        return {x, y};
     }
 }
 
