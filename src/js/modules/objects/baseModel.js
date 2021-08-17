@@ -12,6 +12,7 @@ class ModulesObjectsBaseModel {
         this._baseObject = null; //link to pixi object
         this._uid = Urso.helper.recursiveGet('_uid', params, false); //will setup on create
         this._templatePath = false;
+        this.world = Urso.objects.getWorld();
     }
 
     setupParams(params) {
@@ -129,6 +130,28 @@ class ModulesObjectsBaseModel {
 
         return this;
     };
+
+    toGlobal(){
+        const worldPoint = {x: this.world.x, y: this.world.y};
+        const globalPoint = this._baseObject.toGlobal(worldPoint);
+        return this._calculatePosition(globalPoint);
+    }
+
+    toLocal(from){
+        from = from || this._baseObject.parent;
+        const worldPoint = {x: this.world.x, y: this.world.y};
+        const localPoint = this._baseObject.toLocal(worldPoint, from);
+        return this._calculatePosition(localPoint);
+    }
+
+    _calculatePosition(point){
+        const worldScale = this.world._baseObject.scale;
+
+        const x = Math.floor(point.x / worldScale.x);
+        const y = Math.floor(point.y / worldScale.y);
+
+        return {x, y};
+    }
 }
 
 module.exports = ModulesObjectsBaseModel;
