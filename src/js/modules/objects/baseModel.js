@@ -138,9 +138,9 @@ class ModulesObjectsBaseModel {
     }
 
     toLocal(from){
-        from = from || this._baseObject.parent;
         const worldPoint = {x: this.world.x, y: this.world.y};
-        const localPoint = this._baseObject.toLocal(worldPoint, from);
+        const fromObj = from ? from._baseObject : null;
+        const localPoint = this._baseObject.toLocal(worldPoint, fromObj);
         return this._calculatePosition(localPoint);
     }
 
