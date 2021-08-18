@@ -134,23 +134,24 @@ class ModulesObjectsBaseModel {
     };
 
     toGlobal(){
+        const worldScale = this.world._baseObject.scale;
         const worldPoint = {x: this.world.x, y: this.world.y};
         const globalPoint = this._baseObject.toGlobal(worldPoint);
-        return this._calculatePosition(globalPoint);
+
+        const x = Math.floor(globalPoint.x / worldScale.x);
+        const y = Math.floor(globalPoint.y / worldScale.y);
+
+        return {x, y};
     }
 
     toLocal(from){
         const worldPoint = {x: this.world.x, y: this.world.y};
-        const fromObj = from ? from._baseObject : null;
+        const parent = this.parent ? this.parent._baseObject : this.world._baseObject;
+        const fromObj = from ? from._baseObject : parent;
         const localPoint = this._baseObject.toLocal(worldPoint, fromObj);
-        return this._calculatePosition(localPoint);
-    }
 
-    _calculatePosition(point){
-        const worldScale = this.world._baseObject.scale;
-
-        const x = Math.floor(point.x / worldScale.x);
-        const y = Math.floor(point.y / worldScale.y);
+        const x = Math.floor(localPoint.x) * -1;
+        const y = Math.floor(localPoint.y) * -1 - 1;
 
         return {x, y};
     }
