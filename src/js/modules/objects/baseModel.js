@@ -150,8 +150,8 @@ class ModulesObjectsBaseModel {
         const fromObj = from ? from._baseObject : parent;
         const localPoint = this._baseObject.toLocal(worldPoint, fromObj);
 
-        const x = Math.floor(localPoint.x) * -1;
-        const y = Math.floor(localPoint.y) * -1 - 1;
+        const x = -~~localPoint.x;
+        const y = -~~localPoint.y;
 
         return {x, y};
     }
