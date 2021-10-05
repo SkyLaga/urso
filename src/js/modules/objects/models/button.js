@@ -45,6 +45,11 @@ class ModulesObjectsModelsButton extends Urso.Core.Modules.Objects.BaseModel {
 
     setButtonFrame(key, assetKey) {
         this.buttonFrames[key] = assetKey;
+
+        if (this._isOver)
+            this._changeTexture('over');
+        else
+            this._changeTexture('out');
     }
 
     enable() {

@@ -68,17 +68,13 @@ class ModulesAssetsService {
         for (let assetModel of atlases) {
             const assetKey = assetModel.key;
             let imageData = Urso.cache.getAtlas(assetKey);
-            const folderPath = imageData.url.split('/').slice(0, -1).join('/');
 
             for (let i = 0; i < imageData.spritesheet._frames.length; i++) {
                 let frame = imageData.spritesheet._frames[i];
                 let texture = imageData.textures[i];
-                let newFilename = folderPath + '/' + frame.filename;
-
-                Urso.cache.addFile(newFilename, texture);
+                Urso.cache.addTexture(frame.filename, texture);
             }
         }
-
     }
 
     _processLoadedAssets(group) {
@@ -186,6 +182,9 @@ class ModulesAssetsService {
                 break;
             case Urso.types.assets.ATLAS:
                 model = this.getInstance('Models.Atlas', asset)
+                break;
+            case Urso.types.assets.AUDIOSPRITE:
+                model = this.getInstance('Models.Audiosprite', asset)
                 break;
             case Urso.types.assets.JSON:
                 model = this.getInstance('Models.Json', asset)

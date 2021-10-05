@@ -106,7 +106,6 @@ class ModulesLogicButtons {
 
     _pressHandler(btnName){
         const state = this._getButtonState(btnName, this.DEFAULT_STATE_NAME);
-
         if(state && state.callback)
             state.callback();
     };
