@@ -48,6 +48,10 @@ class ModulesObjectsModelsButton extends Urso.Core.Modules.Objects.BaseModel {
 
         if (this._isOver)
             this._changeTexture('over');
+        else if(this._isDown)
+            this._changeTexture('pressed');
+        else if(this._isDisabled)
+            this._changeTexture('disabled');
         else
             this._changeTexture('out');
     }
