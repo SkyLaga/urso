@@ -64,15 +64,21 @@ class ModulesAssetsService {
 
     _processLoadedAtlases(group) {
         const atlases = this.assets[group].filter(assetModel => assetModel.type === Urso.types.assets.ATLAS);
-
+        
         for (let assetModel of atlases) {
             const assetKey = assetModel.key;
             let imageData = Urso.cache.getAtlas(assetKey);
+            const folderPath = imageData.url.split('/').slice(0, -1).join('/');
 
             for (let i = 0; i < imageData.spritesheet._frames.length; i++) {
                 let frame = imageData.spritesheet._frames[i];
                 let texture = imageData.textures[i];
-                Urso.cache.addTexture(frame.filename, texture);
+                let newFilename = frame.filename;
+
+                if(frame.filename.indexOf('/') === -1)
+                    newFilename = folderPath + '/' + frame.filename;
+
+                Urso.cache.addFile(newFilename, texture);
             }
         }
     }
