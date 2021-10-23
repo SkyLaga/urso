@@ -1,3 +1,7 @@
+const Graphics = require('./graphics.js');
+const Image = require('./image.js');
+const Text = require('./text.js');
+
 class ModulesObjectsModelsSlider extends Urso.Core.Modules.Objects.BaseModel {
     constructor(params) {
         super(params);
@@ -6,19 +10,17 @@ class ModulesObjectsModelsSlider extends Urso.Core.Modules.Objects.BaseModel {
         this._sliderBg = null;
         this._sliderHandle = null;
         this._baseObject = null;
-        this._handleIsPulling = false;
+        this._handleIsPulling
 
         this._addBaseObject();
-        this._createSliderTextures();
-        this._createValueText();
-        this._setDefaultValue();
+        this.createSliderTextures();
+        this._setValueText();
     }
 
     setupParams(params) {
         super.setupParams(params);
         this.contents = [];
-        this.points = Urso.helper.recursiveGet('points', params, [0, 1]);
-        this.defaultValue = Urso.helper.recursiveGet('defaultValue', params, this.points[0]);
+        this.points = Urso.helper.recursiveGet('points', params, 0);
         this.bgTexture = Urso.helper.recursiveGet('bgTexture', params, false);
         this.handleTexture = Urso.helper.recursiveGet('handleTexture', params, false);
         this.minValueTextModel = Urso.helper.recursiveGet('minValueTextModel', params, false);
@@ -26,35 +28,44 @@ class ModulesObjectsModelsSlider extends Urso.Core.Modules.Objects.BaseModel {
         this.currentValueTextModel = Urso.helper.recursiveGet('currentValueTextModel', params, false);
     }
 
-    _createSliderTextures() {
+    createSliderTextures() {
         this._sliderBg = this._createTexture(this.bgTexture);
         this._sliderHandle = this._createTexture(this.handleTexture);
 
         this._setEvents(this._sliderBg._baseObject);
         this._setEvents(this._sliderHandle._baseObject);
+
+        super.addChild(this._sliderBg);
+        super.addChild(this._sliderHandle);
     }
 
-    _createValueText() {
-        if (this.minValueTextModel) {
-            this.minValueText = Urso.objects.create(this.minValueTextModel, this);
-            this.minValueText.text = this.points[0];
+    _setValueText(){
+        if(this.minValueTextModel){
+            this.minValueText = new Text(this.minValueTextModel);
+            this.minValueText._baseObject.text = '0';
+            super.addChild(this.minValueText);
         }
-
-        if (this.maxValueTextModel) {
-            this.maxValueText = Urso.objects.create(this.maxValueTextModel, this);
-            this.maxValueText.text = this.points.length <= 2 ? '100' : this.points[this.points.length - 1];
-        }
-
-        if(this.currentValueTextModel){
-            this.currentValueText = Urso.objects.create(this.currentValueTextModel, this);
+            
+        if(this.maxValueText){
+            this.maxValueText = new Text(this.maxValueTextModel);
+            this.maxValueText._baseObject.text = this.points > 2 ? this.points : '100';
+            super.addChild(this.maxValueText);
         }
     }
 
     _createTexture(model) {
-        if (model.type === Urso.types.objects.GRAPHICS || model.type === Urso.types.objects.IMAGE)
-            return Urso.objects.create(model, this);
-        else
-            Urso.logger.error('ModulesObjectsModelsSlider objects error: textures should be GRAPHICS or IMAGE type');
+        if (model.figure)
+            return this._createGraphics(model)
+
+        return this._createSprite(model)
+    }
+
+    _createSprite(model) {
+        return new Image(model);
+    }
+
+    _createGraphics(model) {
+        return new Graphics(model);
     }
 
     _setEvents(obj) {
@@ -72,78 +83,62 @@ class ModulesObjectsModelsSlider extends Urso.Core.Modules.Objects.BaseModel {
     };
 
     _onPointerDown(obj) {
-        if (obj.target === this._sliderHandle._baseObject)
+        let { x } = obj.data.getLocalPosition(obj.target)
+
+        if (obj.target === this._sliderHandle._baseObject) {
             this._handleIsDragging = true;
+        }else {
+            this._dropHandle(x);
+        }
+
     }
 
-    _onMouseMove({ x }) {
+    _onMouseMove({x}) {
         if (!this._handleIsDragging)
             return
 
-        if (x < this.x)
-            this._sliderHandle.x = 0;
-        else if (x > this.x + this._sliderBg._baseObject.width)
-            this._sliderHandle.x = this._sliderBg._baseObject.width;
+        if(x < this.x )
+            this._sliderHandle._baseObject.x = 0;
+        else if(x > this.x + this._sliderBg._baseObject.width)
+            this._sliderHandle._baseObject.x = this._sliderBg._baseObject.width;
         else
-            this._sliderHandle.x = x - this.x;
+            this._sliderHandle._baseObject.x = x - this.x
     }
 
     _onPointerUp(obj) {
         this._handleIsDragging = false;
-        let x;
 
-        if (obj.target === this._sliderBg._baseObject) {
-            x = obj.data.getLocalPosition(obj.target).x;
-        } else
-            x = this._sliderHandle.x;
-
-        this._dropHandle(x);
+        if (obj.target === this._sliderHandle._baseObject)
+            this._dropHandle();
     }
 
-    _setDefaultValue(){
-        if(!this.defaultValue)
-            return
-
-        if(!this.points.includes(this.defaultValue))
-            this.defaultValue = this.points[0];
-
-        let x = this.points.indexOf(this.defaultValue) * this._sliderBg._baseObject.width / (this.points.length - 1);
-        
-        this._setNewValue(x, this.defaultValue);
-    }
-
-    _dropHandle(x) {
+    _dropHandle(clickX){
+        let x = clickX ? clickX : this._sliderHandle._baseObject.x;
         let value;
         let handleX;
 
-        if(this.points.length <= 2){
-            handleX = x;
-            value = ~~(100 / this._sliderBg._baseObject.width * x);
-        }
-        // calculate closest point
-        else{
-            for (let i = 0; i < this.points.length; i++) {
-                let pointX = i * this._sliderBg._baseObject.width / (this.points.length - 1);
-    
-                if (typeof (handleX) === 'number' && x - pointX < handleX - x) {
+        if(this.points >= 2){
+            for (let i = 0; i <= this.points; i++){
+                let pointX = i * this._sliderBg._baseObject.width / this.points;
+
+                if(typeof(handleX) === 'number' && x - pointX < handleX - x){
                     handleX = handleX;
-                } else {
+                }else {
                     handleX = pointX;
-                    value = this.points[i];
+                    value = i;
                 }
             }
+        }else {
+            handleX = x;
+            value = ~~(this._sliderBg._baseObject.width / x);
         }
 
-        this._setNewValue(handleX, value)
-    }
+        this._sliderHandle._baseObject.x = handleX;
 
-    _setNewValue(x, value){
-        this._sliderHandle.x = x;
-
-        if (this.currentValueText)
+        if(this.currentValueText)
             this.currentValueText.text = value;
 
-        this.emit(Urso.events.MODULES_OBJECTS_SLIDER_SET_NEW_VALUE, { name: this.name, value: value });
+        this.emit(Urso.events.MODULES_OBJECTS_SLIDER_PRESS, { name: this.name, value: value } );
     }
 
     _subscribeOnce() {

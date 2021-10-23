@@ -42,10 +42,8 @@ class PropertyAdapter {
             Urso.types.objects.HITAREA,
             Urso.types.objects.MASK,
             Urso.types.objects.SPINE,
-            Urso.types.objects.SLIDER,
-            Urso.types.objects.TEXTINPUT,
-            Urso.types.objects.CHECKBOX,
             Urso.types.objects.WORLD,
+            Urso.types.objects.SLIDER
         ];
     }
 
