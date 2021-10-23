@@ -105,6 +105,9 @@ class ModulesObjectsCreate {
             case Urso.types.objects.EMITTER:
                 model = this.getInstance('Models.Emitter', object);
                 break;
+            case Urso.types.objects.SLIDER:
+                model = this.getInstance('Models.Slider', object);
+                break;
             default:
                 break;
         }
