@@ -31,7 +31,8 @@ class PropertyAdapter {
             Urso.types.objects.COMPONENT,
             Urso.types.objects.CONTAINER,
             Urso.types.objects.GROUP,
-            Urso.types.objects.WORLD
+            Urso.types.objects.WORLD,
+            Urso.types.objects.SLIDER
         ];
 
         this._typesWithoutAnchor = [
@@ -40,8 +41,7 @@ class PropertyAdapter {
             Urso.types.objects.HITAREA,
             Urso.types.objects.MASK,
             Urso.types.objects.SPINE,
-            Urso.types.objects.WORLD,
-            Urso.types.objects.SLIDER
+            Urso.types.objects.WORLD
         ];
     }
 

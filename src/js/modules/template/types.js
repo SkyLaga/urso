@@ -32,7 +32,8 @@ class ModulesTemplateTypes {
                 GROUP: 15,
                 IMAGES_ANIMATION: 16,
                 DRAGONBONES: 17,
-                ATLASIMAGE: 18
+                ATLASIMAGE: 18,
+                SLIDER: 19
             }
         }
     }
