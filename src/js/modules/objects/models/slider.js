@@ -1,7 +1,3 @@
-const Graphics = require('./graphics.js');
-const Image = require('./image.js');
-const Text = require('./text.js');
-
 class ModulesObjectsModelsSlider extends Urso.Core.Modules.Objects.BaseModel {
     constructor(params) {
         super(params);
@@ -13,8 +9,8 @@ class ModulesObjectsModelsSlider extends Urso.Core.Modules.Objects.BaseModel {
         this._handleIsPulling
 
         this._addBaseObject();
-        this.createSliderTextures();
-        this._setValueText();
+        this._createSliderTextures();
+        this._createValueText();
     }
 
     setupParams(params) {
@@ -28,44 +24,39 @@ class ModulesObjectsModelsSlider extends Urso.Core.Modules.Objects.BaseModel {
         this.currentValueTextModel = Urso.helper.recursiveGet('currentValueTextModel', params, false);
     }
 
-    createSliderTextures() {
+    _createSliderTextures() {
         this._sliderBg = this._createTexture(this.bgTexture);
         this._sliderHandle = this._createTexture(this.handleTexture);
 
         this._setEvents(this._sliderBg._baseObject);
         this._setEvents(this._sliderHandle._baseObject);
 
-        super.addChild(this._sliderBg);
-        super.addChild(this._sliderHandle);
+        this.addChild(this._sliderBg);
+        this.addChild(this._sliderHandle);
     }
 
-    _setValueText(){
-        if(this.minValueTextModel){
-            this.minValueText = new Text(this.minValueTextModel);
+    _createValueText() {
+        if (this.minValueTextModel) {
+            this.minValueText = Urso.objects.create(this.minValueTextModel, this);
             this.minValueText._baseObject.text = '0';
-            super.addChild(this.minValueText);
         }
-            
-        if(this.maxValueText){
-            this.maxValueText = new Text(this.maxValueTextModel);
-            this.maxValueText._baseObject.text = this.points > 2 ? this.points : '100';
-            super.addChild(this.maxValueText);
+
+        if (this.maxValueTextModel) {
+            this.maxValueText = Urso.objects.create(this.maxValueTextModel, this);
+            this.maxValueText._baseObject.text = this.points >= 2 ? this.points : '100';
+        }
+
+        if(this.currentValueTextModel){
+            this.currentValueText = Urso.objects.create(this.currentValueTextModel, this);
+            this.currentValueText._baseObject.text = '0';
         }
     }
 
     _createTexture(model) {
-        if (model.figure)
-            return this._createGraphics(model)
-
-        return this._createSprite(model)
-    }
-
-    _createSprite(model) {
-        return new Image(model);
-    }
-
-    _createGraphics(model) {
-        return new Graphics(model);
+        if (model.type === 10 || model.type === 2)
+            return Urso.objects.create(model, this);
+        else
+            Urso.logger.error('ModulesObjectsModelsSlider objects error: textures should be GRAPHICS or IMAGE type');
     }
 
     _setEvents(obj) {
@@ -83,62 +74,60 @@ class ModulesObjectsModelsSlider extends Urso.Core.Modules.Objects.BaseModel {
     };
 
     _onPointerDown(obj) {
-        let { x } = obj.data.getLocalPosition(obj.target)
-
-        if (obj.target === this._sliderHandle._baseObject) {
+        if (obj.target === this._sliderHandle._baseObject)
             this._handleIsDragging = true;
-        }else {
-            this._dropHandle(x);
-        }
-
     }
 
-    _onMouseMove({x}) {
+    _onMouseMove({ x }) {
         if (!this._handleIsDragging)
             return
 
-        if(x < this.x )
+        if (x < this.x)
             this._sliderHandle._baseObject.x = 0;
-        else if(x > this.x + this._sliderBg._baseObject.width)
+        else if (x > this.x + this._sliderBg._baseObject.width)
             this._sliderHandle._baseObject.x = this._sliderBg._baseObject.width;
         else
-            this._sliderHandle._baseObject.x = x - this.x
+            this._sliderHandle._baseObject.x = x - this.x;
     }
 
     _onPointerUp(obj) {
         this._handleIsDragging = false;
+        let x;
 
-        if (obj.target === this._sliderHandle._baseObject)
-            this._dropHandle();
+        if (obj.target === this._sliderBg._baseObject) {
+            x = obj.data.getLocalPosition(obj.target).x;
+        } else
+            x = this._sliderHandle._baseObject.x;
+
+        this._dropHandle(x);
     }
 
-    _dropHandle(clickX){
-        let x = clickX ? clickX : this._sliderHandle._baseObject.x;
+    _dropHandle(x) {
         let value;
         let handleX;
 
-        if(this.points >= 2){
-            for (let i = 0; i <= this.points; i++){
+        if (this.points >= 2) {
+            for (let i = 0; i <= this.points; i++) {
                 let pointX = i * this._sliderBg._baseObject.width / this.points;
 
-                if(typeof(handleX) === 'number' && x - pointX < handleX - x){
+                if (typeof (handleX) === 'number' && x - pointX < handleX - x) {
                     handleX = handleX;
-                }else {
+                } else {
                     handleX = pointX;
                     value = i;
                 }
             }
-        }else {
+        } else {
             handleX = x;
             value = ~~(this._sliderBg._baseObject.width / x);
         }
 
         this._sliderHandle._baseObject.x = handleX;
 
-        if(this.currentValueText)
-            this.currentValueText.text = value;
+        if (this.currentValueText)
+            this.currentValueText._baseObject.text = value;
 
-        this.emit(Urso.events.MODULES_OBJECTS_SLIDER_PRESS, { name: this.name, value: value } );
+        this.emit(Urso.events.MODULES_OBJECTS_SLIDER_PRESS, { name: this.name, value: value });
     }
 
     _subscribeOnce() {
