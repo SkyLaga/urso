@@ -1,15 +1,14 @@
-const UrsoCoreModulesObjectsModelsToggle = require('./toggle');
-
-class ModulesObjectsModelsCheckbox extends UrsoCoreModulesObjectsModelsToggle {
+class ModulesObjectsModelsCheckbox extends Urso.Core.Modules.Objects.BaseModel {
     constructor(params) {
         super(params);
 
         this._isDisabled = false;
         this._lable = null;
         this._checkbox = null;
+        this.currentFrame = '';
 
         this.type = Urso.types.objects.CHECKBOX;
-
+        this._addBaseObject();
         this._createCheckbox();
 
         this.enable = this.enable.bind(this);
@@ -20,20 +19,19 @@ class ModulesObjectsModelsCheckbox extends UrsoCoreModulesObjectsModelsToggle {
         super.setupParams(params);
 
         this.contents = [];
-
-        this.action = Urso.helper.recursiveGet('action', params, () => { 
-            this.emit(Urso.events.MODULES_OBJECTS_CHECKBOX_PRESS, { name: this.name, status: this._toggleStatus }) 
-        });
-
         this.action = Urso.helper.recursiveGet('action', params, () => { this.emit(Urso.events.MODULES_OBJECTS_CHECKBOX_PRESS, this.name) });
         this.lable = Urso.helper.recursiveGet('lable', params, false);
+        this.frames = {
+            pressed: Urso.helper.recursiveGet('frames.pressed', params, false),
+            unpressed: Urso.helper.recursiveGet('frames.unpressed', params, false)
+        };
 
-        this.defaultStatus = Urso.helper.recursiveGet('defaultStatus', params, 'unpressed'); //pressed or unpressed
+        this.defaultFrame = Urso.helper.recursiveGet('defaultFrame', params, 'unpressed'); //pressed or unpressed
     }
 
     _createCheckbox() {
-        this._toggleStatus = this.defaultStatus;
-        this._checkbox = this._createObject(this.buttonFrames[`${this.defaultStatus}Out`])
+        this.currentFrame = this.defaultFrame;
+        this._checkbox = this._createObject(this.frames[this.defaultFrame])
 
         if (this.lable)
             this._lable = this._createObject(this.lable);
@@ -50,15 +48,43 @@ class ModulesObjectsModelsCheckbox extends UrsoCoreModulesObjectsModelsToggle {
             .on('pointerdown', this._onButtonDown.bind(this))
             .on('pointerup', this._onButtonUp.bind(this))
             .on('pointerupoutside', this._onButtonUp.bind(this))
-            .on('pointerover', this._onButtonOver.bind(this))
-            .on('pointerout', this._onButtonOut.bind(this));
 
         return object;
+    }
+
+    enable() {
+        if (!this._isDisabled)
+            return false;
+
+        this._isDisabled = false;
+    }
+
+    disable() {
+        if (this._isDisabled)
+            return false;
+
+        this._isDisabled = true;
     }
 
     _addBaseObject() {
         this._baseObject = new PIXI.Container();
     };
+
+    _onButtonDown() {
+        if (this._isDisabled)
+            return false;
+
+        this.currentFrame = this.currentFrame === 'pressed' ? 'unpressed' : 'pressed';
+        this._changeTexture(this.currentFrame);
+    }
+
+    _onButtonUp() {
+        if (this._isDisabled)
+            return false;
+
+        if (this.action)
+            this.action();
+    }
 
     _drawGraphics({ polygon, rectangle, fillColor }) {
         if (!polygon && !rectangle)
@@ -77,19 +103,10 @@ class ModulesObjectsModelsCheckbox extends UrsoCoreModulesObjectsModelsToggle {
     };
 
     _changeTexture(key) {
-        if (!this.buttonFrames[key]) {
-            if (key === `${this._toggleStatus}Out`) {
-                Urso.logger.error('ModulesObjectsModelsButton assets error: no out image ' + this.buttonFrames.out);
-                return false;
-            }
-
-            this._changeTexture(`${this._toggleStatus}Out`); // load default texture for this key
-            return false;
-        }
-        if (this.buttonFrames[key].type === Urso.types.objects.GRAPHICS)
-            this._drawGraphics(this.buttonFrames[key].figure);
+        if (this.frames[key].type === 10)
+            this._drawGraphics(this.frames[key].figure);
         else
-            this._checkbox.changeTexture(this.buttonFrames[key].assetKey);
+            this._checkbox.changeTexture(this.frames[key].assetKey);
     }
 }
 

@@ -108,6 +108,9 @@ class ModulesObjectsCreate {
             case Urso.types.objects.SLIDER:
                 model = this.getInstance('Models.Slider', object);
                 break;
+            case Urso.types.objects.CHECKBOX:
+                model = this.getInstance('Models.Checkbox', object);
+                break;
             default:
                 break;
         }

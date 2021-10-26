@@ -32,7 +32,8 @@ class PropertyAdapter {
             Urso.types.objects.CONTAINER,
             Urso.types.objects.GROUP,
             Urso.types.objects.WORLD,
-            Urso.types.objects.SLIDER
+            Urso.types.objects.SLIDER,
+            Urso.types.objects.CHECKBOX
         ];
 
         this._typesWithoutAnchor = [
