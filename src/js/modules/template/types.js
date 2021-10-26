@@ -33,7 +33,8 @@ class ModulesTemplateTypes {
                 IMAGES_ANIMATION: 16,
                 DRAGONBONES: 17,
                 ATLASIMAGE: 18,
-                SLIDER: 19
+                SLIDER: 19,
+                CHECKBOX: 20
             }
         }
     }

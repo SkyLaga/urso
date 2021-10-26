@@ -9,6 +9,7 @@ class ModulesObserverConfig {
             MODULES_OBJECTS_BUTTON_PRESS: 'modules.objects.button.press',
             MODULES_OBJECTS_HIT_AREA_PRESS: 'modules.objects.hitArea.press',
             MODULES_OBJECTS_SLIDER_PRESS: 'modules.objects.slider.press',
+            MODULES_OBJECTS_CHECKBOX_PRESS: 'modules.objects.checkbox.press',
             MODULES_LOGIC_SOUNDS_DO: 'modules.soundManager.do',
             MODULES_SOUND_MANAGER_UPDATE_CFG: 'modules.soundManager.updateCfg',
             MODULES_SOUND_MANAGER_SET_GLOBAL_VOLUME: 'modules.soundManager.setGlobalVolume',
