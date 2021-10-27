@@ -15,7 +15,6 @@ class ModulesObjectsModelsButton extends Urso.Core.Modules.Objects.BaseModel {
         this._isOver = false;
         this._isDown = false;
         this._isDisabled = false;
-        this._togglePressed = false;
         this._textures;
 
         this.type = Urso.types.objects.BUTTON;
@@ -32,7 +31,6 @@ class ModulesObjectsModelsButton extends Urso.Core.Modules.Objects.BaseModel {
         this.keyDownAction = Urso.helper.recursiveGet('keyDownAction', params, false);
         this.mouseOverAction = Urso.helper.recursiveGet('mouseOverAction', params, false);
         this.mouseOutAction = Urso.helper.recursiveGet('mouseOutAction', params, false);
-        this.isToggle = Urso.helper.recursiveGet('isToggle', params, false);
 
         this.buttonFrames = {
             over: Urso.helper.recursiveGet('buttonFrames.over', params, false),
@@ -114,22 +112,7 @@ class ModulesObjectsModelsButton extends Urso.Core.Modules.Objects.BaseModel {
         if (this._isDisabled) //can be disabled after keyDownAction
             return false;
 
-        if(this.isToggle) 
-            return this._onToggleDown();
-
         this._changeTexture('pressed');
-    }
-
-    _onToggleDown(){
-        this._togglePressed = this._togglePressed ? false : true;
-
-        if(this._togglePressed)
-            return this._changeTexture('pressed');
-
-        if (this._isOver)
-            this._changeTexture('over');
-        else
-            this._changeTexture('out');
     }
 
     _onButtonUp() {
@@ -141,7 +124,7 @@ class ModulesObjectsModelsButton extends Urso.Core.Modules.Objects.BaseModel {
         if (this.action)
             this.action();
 
-        if (this._isDisabled || this._togglePressed) //can be disabled after action
+        if (this._isDisabled) //can be disabled after action
             return false;
 
         if (this._isOver)
@@ -153,11 +136,8 @@ class ModulesObjectsModelsButton extends Urso.Core.Modules.Objects.BaseModel {
     _onButtonOver() {
         this._isOver = true;
 
-        if (this._isDisabled || this._togglePressed)
+        if (this._isDisabled || this._isDown)
             return false;
-
-        if (this._isDown)
-            return;
 
         if (this.mouseOverAction)
             this.mouseOverAction();
@@ -168,11 +148,8 @@ class ModulesObjectsModelsButton extends Urso.Core.Modules.Objects.BaseModel {
     _onButtonOut() {
         this._isOver = false;
 
-        if (this._isDisabled || this._togglePressed)
+        if (this._isDisabled || this._isDown)
             return false;
-
-        if (this._isDown)
-            return;
 
         if (this.mouseOutAction)
             this.mouseOutAction();
