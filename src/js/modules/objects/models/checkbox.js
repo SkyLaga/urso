@@ -81,7 +81,7 @@ class ModulesObjectsModelsCheckbox extends UrsoCoreModulesObjectsModelsToggle {
             this._changeTexture(`${this._toggleStatus}Out`); // load default texture for this key
             return false;
         }
-        if (this.buttonFrames[key].type === 10)
+        if (this.buttonFrames[key].type === Urso.types.objects.GRAPHICS)
             this._drawGraphics(this.buttonFrames[key].figure);
         else
             this._checkbox.changeTexture(this.buttonFrames[key].assetKey);
