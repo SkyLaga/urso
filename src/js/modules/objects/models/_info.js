@@ -17,6 +17,7 @@ Urso.Core.Modules.Objects.Models = {
     Spine: require('./spine.js'),
     Text: require('./text.js'),
     Slider: require('./slider.js'),
+    Toggle: require('./toggle.js'),
     Checkbox: require('./checkbox.js'),
     World:  require('./world.js')
 };

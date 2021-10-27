@@ -34,7 +34,8 @@ class ModulesTemplateTypes {
                 DRAGONBONES: 17,
                 ATLASIMAGE: 18,
                 SLIDER: 19,
-                CHECKBOX: 20
+                TOGGLE: 20,
+                CHECKBOX: 21
             }
         }
     }
