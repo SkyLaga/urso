@@ -19,5 +19,6 @@ Urso.Core.Modules.Objects.Models = {
     Slider: require('./slider.js'),
     Toggle: require('./toggle.js'),
     Checkbox: require('./checkbox.js'),
+    Scrollbox: require('./scrollbox.js'),
     World:  require('./world.js')
 };

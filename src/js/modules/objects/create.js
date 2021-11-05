@@ -114,6 +114,9 @@ class ModulesObjectsCreate {
             case Urso.types.objects.CHECKBOX:
                 model = this.getInstance('Models.Checkbox', object);
                 break;
+            case Urso.types.objects.SCROLLBOX:
+                model = this.getInstance('Models.Scrollbox', object);
+                break;
             default:
                 break;
         }
