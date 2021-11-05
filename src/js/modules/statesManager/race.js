@@ -35,6 +35,8 @@ class ModulesStatesManagerRace extends Action {
                 action.run(this._actionSuccessHandler);
             else
                 action.finished = true;
+
+        this._checkFinish();
     }
 
     _actionSuccessHandler() {
@@ -66,6 +68,9 @@ class ModulesStatesManagerRace extends Action {
     }
 
     _onFinish() {
+        if(this.finished)
+            return; 
+
         this.finished = true;
         log(`%c action finish <--- ${this.name}`, 'color: orange');
         this._onFinishCallback();
