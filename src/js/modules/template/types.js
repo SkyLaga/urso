@@ -35,7 +35,8 @@ class ModulesTemplateTypes {
                 ATLASIMAGE: 18,
                 SLIDER: 19,
                 TOGGLE: 20,
-                CHECKBOX: 21
+                CHECKBOX: 21,
+                SCROLLBOX: 22
             }
         }
     }

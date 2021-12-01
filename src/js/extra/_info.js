@@ -5,7 +5,6 @@ window.PIXI.particles = require('pixi-particles');
 import { DropShadowFilter } from '@pixi/filter-drop-shadow';
 PIXI.filters['DropShadowFilter'] = DropShadowFilter;
 
-
 require("pixi-spine");
 require("pixi-projection");
 require("pixi-text-input");
