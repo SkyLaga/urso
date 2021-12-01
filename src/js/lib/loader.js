@@ -73,7 +73,6 @@ class LibLoader {
             return false;
 
         this._isRunning = true;
-
         const loader = new PIXI.Loader();
         this._assetsQuery.forEach(asset => {
             // TODO: check to load

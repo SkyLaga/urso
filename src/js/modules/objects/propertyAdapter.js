@@ -33,6 +33,7 @@ class PropertyAdapter {
             Urso.types.objects.GROUP,
             Urso.types.objects.WORLD,
             Urso.types.objects.SLIDER,
+            Urso.types.objects.SCROLLBOX,
         ];
 
         this._typesWithoutAnchor = [
@@ -41,7 +42,7 @@ class PropertyAdapter {
             Urso.types.objects.HITAREA,
             Urso.types.objects.MASK,
             Urso.types.objects.SPINE,
-            Urso.types.objects.SCROLLBOX,
+            Urso.types.objects.TEXTINPUT,
             Urso.types.objects.WORLD
         ];
     }
@@ -65,7 +66,6 @@ class PropertyAdapter {
         x += this.adaptAnchorX(object);
         x += this.adaptAlignX(object);
         object._baseObject.x = x;
-
         this.adaptWidth(object);
     }
 

@@ -117,6 +117,9 @@ class ModulesObjectsCreate {
             case Urso.types.objects.SCROLLBOX:
                 model = this.getInstance('Models.Scrollbox', object);
                 break;
+            case Urso.types.objects.TEXTINPUT:
+                model = this.getInstance('Models.TextInput', object);
+                break;
             default:
                 break;
         }
