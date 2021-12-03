@@ -10,6 +10,7 @@ class ModulesObserverConfig {
             MODULES_OBJECTS_HIT_AREA_PRESS: 'modules.objects.hitArea.press',
             MODULES_OBJECTS_SLIDER_SET_NEW_VALUE: 'modules.objects.slider.setNewValue',
             MODULES_OBJECTS_CHECKBOX_PRESS: 'modules.objects.checkbox.press',
+            MODULES_OBJECTS_TOGGLE_PRESS: 'modules.objects.toggle.press',
             MODULES_OBJECTS_TEXTINPUT_BLUR: 'modules.objects.textinput.blur',
             MODULES_LOGIC_SOUNDS_DO: 'modules.soundManager.do',
             MODULES_SOUND_MANAGER_UPDATE_CFG: 'modules.soundManager.updateCfg',
