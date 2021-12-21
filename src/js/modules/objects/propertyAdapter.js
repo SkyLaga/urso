@@ -43,6 +43,7 @@ class PropertyAdapter {
             Urso.types.objects.MASK,
             Urso.types.objects.SPINE,
             Urso.types.objects.TEXTINPUT,
+            Urso.types.objects.CHECKBOX,
             Urso.types.objects.WORLD
         ];
     }
